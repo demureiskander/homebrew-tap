@@ -7,7 +7,7 @@ cask "squish" do
   desc "Image compressor, converter and resizer for macOS"
   homepage "https://github.com/demureiskander/squish"
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: ":sonoma"
 
   app "Squish.app"
 
