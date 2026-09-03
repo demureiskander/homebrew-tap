@@ -2,12 +2,11 @@ class Pinpoint < Formula
   desc "Native macOS crosshair overlay built with SwiftUI and AppKit"
   homepage "https://github.com/demureiskander/PinPoint"
   url "https://github.com/demureiskander/PinPoint/archive/refs/tags/v1.0.0.tar.gz"
-  version "1.0.0"
   sha256 "8d0a24335a4a4eb3c5acb1a7efbf9db3fc87eb2f26589e23b45afe254312f146"
   license "MIT"
 
-  depends_on arch: :arm64
   depends_on xcode: ["14.0", :build]
+  depends_on arch: :arm64
 
   def install
     chmod "+x", "scripts/build.sh"
