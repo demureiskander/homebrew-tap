@@ -1,0 +1,60 @@
+name: Sync Darkwrite cask
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the latest public Darkwrite release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! tag="$(gh api repos/demureiskander/darkwrite/releases/latest \
+            --jq .tag_name)"; then
+            echo "No public Darkwrite release exists yet."
+            echo "available=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          url="$(gh api repos/demureiskander/darkwrite/releases/latest \
+            --jq '.assets[] | select(.name == "Darkwrite-Installer.dmg") | .browser_download_url')"
+          test -n "${url}"
+          echo "available=true" >> "${GITHUB_OUTPUT}"
+          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+          echo "url=${url}" >> "${GITHUB_OUTPUT}"
+
+      - name: Download and hash the installer
+        if: steps.release.outputs.available == 'true'
+        id: installer
+        run: |
+          curl --fail --location --output Darkwrite-Installer.dmg \
+            "${{ steps.release.outputs.url }}"
+          echo "sha256=$(sha256sum Darkwrite-Installer.dmg | awk '{print $1}')" \
+            >> "${GITHUB_OUTPUT}"
+
+      - name: Update cask when the release changed
+        if: steps.release.outputs.available == 'true'
+        env:
+          TAG: ${{ steps.release.outputs.tag }}
+          SHA256: ${{ steps.installer.outputs.sha256 }}
+        run: |
+          version="${TAG#v}"
+          sed \
+            -e "s/{{VERSION}}/${version}/g" \
+            -e "s/{{SHA256}}/${SHA256}/g" \
+            Casks/darkwrite.rb.template > Casks/darkwrite.rb
+          git diff --quiet -- Casks/darkwrite.rb && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Casks/darkwrite.rb
+          git commit -m "Update darkwrite to ${TAG}"
+          git push

@@ -1,0 +1,18 @@
+cask "darkwrite" do
+  version "{{VERSION}}"
+  sha256 "{{SHA256}}"
+
+  url "https://github.com/demureiskander/darkwrite/releases/download/v#{version}/Darkwrite-Installer.dmg"
+  name "Darkwrite"
+  desc "Local-first writing workspace"
+  homepage "https://github.com/demureiskander/darkwrite"
+
+  app "Darkwrite.app"
+
+  # Darkwrite is currently unsigned and not notarized. macOS will request
+  # confirmation for the first launch in System Settings → Privacy & Security.
+  zap trash: [
+    "~/Library/Application Support/Darkwrite",
+    "~/Library/Preferences/io.github.astudentinearth.darkwrite.plist",
+  ]
+end
