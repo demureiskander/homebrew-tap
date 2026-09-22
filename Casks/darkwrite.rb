@@ -1,6 +1,6 @@
 cask "darkwrite" do
-  version "1.3.0-beta.2"
-  sha256 "f4864c0dd332a8e85ff4ecbdaa7ae5736983f03fc10aef8812ad6cd4d55e0f6d"
+  version "1.3.0-beta.3"
+  sha256 "c74ee0e9bdde68a4acd434671c45818c802b1b48948ce493f6220db61d0dd02d"
 
   url "https://github.com/demureiskander/darkwrite/releases/download/v#{version}/Darkwrite-Installer.dmg"
   name "Darkwrite"
