@@ -52,9 +52,9 @@ jobs:
             -e "s/{{VERSION}}/${version}/g" \
             -e "s/{{SHA256}}/${SHA256}/g" \
             Casks/darkwrite.rb.template > Casks/darkwrite.rb
-          git diff --quiet -- Casks/darkwrite.rb && exit 0
+          git add Casks/darkwrite.rb
+          git diff --cached --quiet && exit 0
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Casks/darkwrite.rb
           git commit -m "Update darkwrite to ${TAG}"
           git push
